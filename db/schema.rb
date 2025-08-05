@@ -26,8 +26,13 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_05_072124) do
   end
 
   create_table "user_followings", force: :cascade do |t|
+    t.integer "follower_id", null: false
+    t.integer "following_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["follower_id", "following_id"], name: "index_user_followings_on_follower_id_and_following_id", unique: true
+    t.index ["follower_id"], name: "index_user_followings_on_follower_id"
+    t.index ["following_id"], name: "index_user_followings_on_following_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -38,4 +43,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_05_072124) do
   end
 
   add_foreign_key "sleep_records", "users"
+  add_foreign_key "user_followings", "users", column: "follower_id"
+  add_foreign_key "user_followings", "users", column: "following_id"
 end
