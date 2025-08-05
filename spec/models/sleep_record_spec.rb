@@ -23,4 +23,18 @@ RSpec.describe SleepRecord, type: :model do
       expect(record.duration_seconds).to eq(7 * 3600) # 7 hours in seconds
     end
   end
+
+  describe '#clocked_in?' do
+    it 'returns true when wake_up_time is nil' do
+      record = build(:sleep_record, sleep_time: 8.hours.ago)
+
+      expect(record.clocked_in?).to be true
+    end
+
+    it 'returns false when wake_up_time is present' do
+      record = build(:sleep_record, :completed)
+
+      expect(record.clocked_in?).to be false
+    end
+  end
 end

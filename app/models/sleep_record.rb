@@ -9,6 +9,10 @@ class SleepRecord < ApplicationRecord
 
   before_save :calculate_duration
 
+  def clocked_in?
+    wake_up_time.nil?
+  end
+
   private
 
   def wake_up_time_after_sleep_time
