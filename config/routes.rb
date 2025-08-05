@@ -17,6 +17,12 @@ Rails.application.routes.draw do
           end
         end
       end
+
+      resources :followings, controller: 'user_followings', only: [:index, :create] do
+        collection do
+          delete ':target_user_id', action: :destroy
+        end
+      end
     end
   end
 end
