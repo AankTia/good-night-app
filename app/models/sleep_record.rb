@@ -22,6 +22,6 @@ class SleepRecord < ApplicationRecord
   def calculate_duration
     return unless wake_up_time && sleep_time
 
-    self.duration_seconds = (wake_up_time - sleep_time).to_id
+    self.duration_seconds = (wake_up_time - sleep_time).to_i
   end
 end

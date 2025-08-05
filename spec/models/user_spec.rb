@@ -31,4 +31,32 @@ RSpec.describe User, type: :model do
       expect(user1.follow(user2)).to be_falsey
     end
   end
+
+  describe '#friends_sleep_records_last_week' do
+    let(:user) { create(:user) }
+    let(:friend1) { create(:user) }
+    let(:friend2) { create(:user) }
+
+    before do
+      user.follow(friend1)
+      user.follow(friend2)
+    end
+
+    it 'return sleep records from friend is the last week ordered by duration' do
+      # Create records with dirrefernt durations
+      record1 = create(:sleep_record, :completed, user: friend1,
+                      created_at: 2.days.ago, sleep_time: 2.days.ago, wake_up_time: 2.days.ago + 6.hours)
+      record2 = create(:sleep_record, :completed, user: friend2,
+                      created_at: 1.day.ago, sleep_time: 1.day.ago, wake_up_time: 1.day.ago + 8.hours)
+      
+      # Old record (should not be included)
+      create(:sleep_record, :completed, user: friend1,
+            created_at: 2.weeks.ago, sleep_time: 2.weeks.ago, wake_up_time: 2.weeks.ago + 7.hours)
+
+      records = user.friends_sleep_records_last_week
+      expect(records.count).to eq(2)
+      expect(records.first).to eq(record1) # 6 hours (shorter duration first)
+      expect(records.last).to eq(record2) # 8 hours
+    end
+  end
 end

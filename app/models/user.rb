@@ -16,4 +16,14 @@ class User < ApplicationRecord
   def following?(user)
     following_users.include?(user)
   end
+
+  def friends_sleep_records_last_week
+    one_week_ago = 1.week.ago
+
+    SleepRecord.joins(:user)
+               .where(user: following_users)
+               .where(created_at: one_week_ago..Time.current)
+               .where.not(wake_up_time: nil)
+               .order(:duration_seconds)
+  end
 end
