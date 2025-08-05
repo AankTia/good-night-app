@@ -11,7 +11,7 @@ class UserFollowing < ApplicationRecord
     return unless follower_id && following_id
 
     if follower_id == following_id
-      errors.add(:following_id: 'cannot follow yourself')
+      errors.add(following_id: 'cannot follow yourself')
     end
   end
 end
