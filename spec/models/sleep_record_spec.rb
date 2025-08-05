@@ -15,4 +15,12 @@ RSpec.describe SleepRecord, type: :model do
       expect(record.errors[:wake_up_time]).to include('must be after sleep time')
     end
   end
+
+  describe '#calculate_duration' do
+    it 'calculates duration in seconds when both times are present' do
+      record = create(:sleep_record, sleep_time: 8.hours.ago, wake_up_time: 1.hour.ago)
+
+      expect(record.duration_seconds).to eq(7 * 3600) # 7 hours in seconds
+    end
+  end
 end
