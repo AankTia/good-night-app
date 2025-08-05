@@ -7,4 +7,13 @@ class User < ApplicationRecord
   has_many :follower_users, through: :followers, source: :follower
 
   validates :name, presence: true, length: { maximum: 100 }
+
+  def follow(user)
+    return false if user == self || following?(user)
+    followings.create(following: user)
+  end
+
+  def following?(user)
+    following_users.include?(user)
+  end
 end
