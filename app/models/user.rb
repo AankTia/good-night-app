@@ -17,6 +17,10 @@ class User < ApplicationRecord
     following_users.include?(user)
   end
 
+  def unfollow(user)
+    followings.find_by(following: user)&.destroy
+  end
+
   def friends_sleep_records_last_week
     one_week_ago = 1.week.ago
 

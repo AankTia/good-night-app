@@ -23,6 +23,16 @@ class Api::V1::UserFollowingsController < ApplicationController
 
   # DELETE /api/v1/users/:user_id/followings/:target_user_id
   def destroy
+    if @user.unfollow(@target_user)
+      render json: {
+        message: "Successfully unfollowed #{@target_user.name}"
+      }
+    else
+      render json: {
+        error: 'Unable to unfollow user',
+        details: ['Not following this user']
+      }, status: :unprocessable_content
+    end
   end
 
   private
