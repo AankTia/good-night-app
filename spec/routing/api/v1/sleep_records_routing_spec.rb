@@ -16,8 +16,8 @@ RSpec.describe 'SleepRecordsController', type: :routing do
       expect(get "/api/v1/users/#{user.id}/sleep_records/1").to route_to("api/v1/sleep_records#show", user_id: user.id.to_s, id: '1')
     end
 
-    it "routes to #friend_sleep_records" do
-      expect(get "/api/v1/users/#{user.id}/sleep_records/friend_sleep_records").to route_to("api/v1/sleep_records#friend_sleep_records", user_id: user.id.to_s)
+    it "routes to #friends_sleep_records" do
+      expect(get "/api/v1/users/#{user.id}/sleep_records/friends_sleep_records").to route_to("api/v1/sleep_records#friends_sleep_records", user_id: user.id.to_s)
     end
   end
 end

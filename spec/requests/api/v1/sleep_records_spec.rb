@@ -87,4 +87,32 @@ RSpec.describe 'Api::V1::SleepRecords', type: :request do
       end
     end
   end
+
+  describe '(friends_sleep_records) GET /api/v1/users/:user_id/friends_sleep_records' do
+    let(:friend1) { create(:user) }
+    let(:friend2) { create(:user) }
+
+    before do 
+      user.follow(friend1)
+      user.follow(friend2)
+
+      create(:sleep_record, :completed, user: friend1,
+             sleep_time: 2.days.ago, wake_up_time: 2.days.ago + 6.hours)
+      create(:sleep_record, :completed, user: friend2,
+             sleep_time: 1.day.ago, wake_up_time: 1.day.ago + 8.hours)
+    end
+
+    it 'returns friend sleep records from last week ordered by duration' do
+      get "/api/v1/users/#{user.id}/sleep_records/friends_sleep_records"
+
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+      expect(json['sleep_records'].size).to eq(2)
+      expect(json['summary']['total_records']).to eq(2)
+
+      # verify ordering by duration (shortest first)
+      durations = json['sleep_records'].map { |r| r['duration_seconds'] }
+      expect(durations).to eq(durations.sort)
+    end
+  end
 end

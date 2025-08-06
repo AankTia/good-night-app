@@ -58,7 +58,22 @@ class Api::V1::SleepRecordsController < ApplicationController
     }
   end
 
-  # GET /api/v1/users/:user_id/sleep_records/friend_sleep_records
-  def friend_sleep_records
+  # GET /api/v1/users/:user_id/sleep_records/friends_sleep_records
+  def friends_sleep_records
+    friends_records = @user.friends_sleep_records_last_week.to_a
+
+    render json: {
+      sleep_records: ActiveModel::Serializer::CollectionSerializer.new(
+        friends_records,
+        serializer: SleepRecordSerializer
+      ),
+      summary: {
+        total_records: friends_records.size,
+        date_range: {
+          from: 1.week.ago.to_date,
+          to: Date.current
+        }
+      }
+    }
   end
 end

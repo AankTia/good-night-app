@@ -13,7 +13,7 @@ Rails.application.routes.draw do
       resources :users, only: [:show] do
         resources :sleep_records, only: [:index, :create, :show] do
           collection do
-            get :friend_sleep_records
+            get :friends_sleep_records
           end
         end
 
