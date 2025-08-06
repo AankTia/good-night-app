@@ -37,7 +37,7 @@ RSpec.describe 'Api::V1::UserFollowings', type: :request do
     end
   end
 
-  describe '(delete) DELETE /api/v1/users/:user_id/followings' do
+  describe '(delete) DELETE /api/v1/users/:user_id/followings/:target_user_id' do
     before do
       user.follow(target_user)
     end
@@ -51,6 +51,22 @@ RSpec.describe 'Api::V1::UserFollowings', type: :request do
 
       json = JSON.parse(response.body)
       expect(json['message']).to include('Successfully unfollowed')
+    end
+  end
+
+  describe 'GET /api/v1/users/:user_id/followings'do
+    before do
+      3.times { user.follow(create(:user)) }
+    end
+
+    it 'returns paginated list of followings' do
+      get "/api/v1/users/#{user.id}/followings"
+
+      expect(response).to have_http_status(:ok)
+
+      json = JSON.parse(response.body)
+      expect(json['followings'].size).to eq(3)
+      expect(json['pagination']).to be_present
     end
   end
 end

@@ -19,6 +19,21 @@ class Api::V1::UserFollowingsController < ApplicationController
 
   # GET /api/v1/users/:user_id/followings
   def index
+    followings = @user.following_users
+                      .page(params[:page])
+                      .per(params[:per_page] || 50)
+                    
+    render json: {
+      followings: ActiveModel::Serializer::CollectionSerializer.new(
+        followings,
+        serializer: UserSerializer
+      ),
+      pagination: {
+        current_page: followings.current_page,
+        total_pages: followings.total_pages,
+        total_count: followings.total_count
+      }
+    }
   end
 
   # DELETE /api/v1/users/:user_id/followings/:target_user_id
