@@ -70,6 +70,18 @@ sudo systemctl enable redis-server
    rails db:seed
    ```
 
+   or
+
+   ```bash
+   rails db:prepare
+   ```
+
+   This will:
+
+   - Create databases for all environments (development, test)
+   - Run migrations
+   - Load schema (if needed)
+
 4. **Start Redis server** (if not already running)
 
    ```bash
