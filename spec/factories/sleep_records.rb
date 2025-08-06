@@ -7,4 +7,9 @@ FactoryBot.define do
     sleep_time { 8.hours.ago }
     wake_up_time { 1.hour.ago }
   end
+
+  trait :active do
+    sleep_time { 8.hours.ago }
+    wake_up_time { nil }
+  end
 end
