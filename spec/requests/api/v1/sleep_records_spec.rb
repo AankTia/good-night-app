@@ -53,4 +53,38 @@ RSpec.describe 'Api::V1::SleepRecords', type: :request do
       expect(json['pagination']).to be_present
     end
   end
+
+  describe '(show) GET /api/v1/users/:user_id/sleep_records/1' do
+    context 'when record is exists' do
+      before do
+        create_list(:sleep_record, 3, :completed, user: user)
+      end
+
+      it 'return record data' do
+        get "/api/v1/users/#{user.id}/sleep_records/#{user.sleep_records.last.id}"
+
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body)
+        expect(json['sleep_record']).to be_present
+        expect(json['sleep_record']['user']).to be_present
+      end
+    end
+
+    context 'when record is not exists' do
+      before do
+        create_list(:sleep_record, 3, :completed, user: user)
+      end
+
+      it 'return record data' do
+        get "/api/v1/users/#{user.id}/sleep_records/0"
+
+        expect(response).to have_http_status(:not_found)
+
+        json = JSON.parse(response.body)
+        expect(json['error']).to be_present
+        expect(json['error']).to eq('Record not found')
+      end
+    end
+  end
 end

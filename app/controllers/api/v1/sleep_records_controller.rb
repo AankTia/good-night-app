@@ -51,6 +51,11 @@ class Api::V1::SleepRecordsController < ApplicationController
 
   # GET  /api/v1/users/:user_id/sleep_records/:id
   def show
+    sleep_record = @user.sleep_records.find(params[:id])
+
+    render json: {
+      sleep_record: SleepRecordSerializer.new(sleep_record)
+    }
   end
 
   # GET /api/v1/users/:user_id/sleep_records/friend_sleep_records
