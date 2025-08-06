@@ -97,3 +97,7 @@ bundle exec rspec
 # Run specific test file
 bundle exec rspec spec/models/sleep_record_spec.rb
 ```
+
+## API Documentation
+
+See [API Documentation](API_Documentation.md) for details.
