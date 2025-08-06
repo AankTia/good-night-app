@@ -13,5 +13,11 @@ include FactoryBot::Syntax::Methods
 
 puts "Seeding Dummy Users"
 5.times do
-  create(:user)
+  user = create(:user)
+  create_list(:sleep_record, 3, :completed, user: user)
 end
+
+user = User.first
+User.where
+    .not(id: user.id)
+    .each { |target_user| user.follow(target_user) }
