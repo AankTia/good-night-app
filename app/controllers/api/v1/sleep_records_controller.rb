@@ -60,7 +60,11 @@ class Api::V1::SleepRecordsController < ApplicationController
 
   # GET /api/v1/users/:user_id/sleep_records/friends_sleep_records
   def friends_sleep_records
-    friends_records = @user.friends_sleep_records_last_week.to_a
+    cache_key = "user_#{@user_id}_friends_sleep_records_#{1.week.ago.to_date}"
+
+    friends_records = Rails.cache.fetch(cache_key, expires_in: 1.hours) do
+      @user.friends_sleep_records_last_week.to_a
+    end
 
     render json: {
       sleep_records: ActiveModel::Serializer::CollectionSerializer.new(
