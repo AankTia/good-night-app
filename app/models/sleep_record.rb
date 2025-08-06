@@ -13,6 +13,11 @@ class SleepRecord < ApplicationRecord
     wake_up_time.nil?
   end
 
+  def duration_hours
+    return nil unless duration_seconds
+    (suration_seconds / 3600.0).round(2)
+  end
+
   private
 
   def wake_up_time_after_sleep_time

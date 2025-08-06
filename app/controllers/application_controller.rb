@@ -16,4 +16,8 @@ class ApplicationController < ActionController::API
       details: exception.record.errors.full_messages
     }, status: :unprocessable_content
   end
+
+  def find_user
+    @user = User.find(params[:user_id] || params[:id])
+  end
 end
