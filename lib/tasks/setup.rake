@@ -1,6 +1,6 @@
 namespace :db do
   desc "Drop, Create, Migrate and seed the database"
-  task reset: :environment do
+  task setup: :environment do
     Rake::Task["db:drop"].invoke
     Rake::Task["db:create"].invoke
     Rake::Task["db:migrate"].invoke
