@@ -30,6 +30,23 @@ class Api::V1::SleepRecordsController < ApplicationController
 
   # GET  /api/v1/users/:user_id/sleep_records
   def index
+    sleep_records = @user.sleep_records
+                         .ordered_by_created_time
+                         .includes(:user)
+                         .page(params[:page])
+                         .per(params[:per_page] || 50)
+    
+    render json: {
+      sleep_records: ActiveModel::Serializer::CollectionSerializer.new(
+        sleep_records,
+        serializer: SleepRecordSerializer
+      ),
+      pagination: {
+        current_page: sleep_records.current_page,
+        total_pages: sleep_records.total_pages,
+        total_count: sleep_records.total_count
+      }
+    }
   end
 
   # GET  /api/v1/users/:user_id/sleep_records/:id
