@@ -1,7 +1,20 @@
 class Api::V1::UserFollowingsController < ApplicationController
+  before_action :find_user
+  before_action :find_target_user, only: [:create, :destroy]
 
   # POST /api/v1/users/:user_id/followings
   def create
+    if @user.follow(@target_user)
+      render json: {
+        message: "Successfully followed #{@target_user.name}",
+        following: UserSerializer.new(@target_user)
+      }, status: :created
+    else
+      render json: {
+        error: 'Unable to follow user',
+        details: ['Already following this user or invalid target']
+      }, status: :unprocessable_content
+    end
   end
 
   # GET /api/v1/users/:user_id/followings
@@ -10,5 +23,11 @@ class Api::V1::UserFollowingsController < ApplicationController
 
   # DELETE /api/v1/users/:user_id/followings/:target_user_id
   def destroy
+  end
+
+  private
+
+  def find_target_user
+    @target_user = User.find(params[:target_user_id])
   end
 end
