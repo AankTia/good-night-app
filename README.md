@@ -47,6 +47,14 @@ sudo systemctl enable redis-server
 # Using WSL2 or download from GitHub releases
 ```
 
+**Test Redis connection in Rails console**
+
+```ruby
+redis = Redis.new(url: "redis://localhost:6379/1")
+redis.set("mykey", "hello world")
+redis.get("mykey") # => "hello world"
+```
+
 ## 🔧 Installation
 
 1. **Clone the Repository**
