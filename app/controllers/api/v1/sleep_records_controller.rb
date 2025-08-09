@@ -60,11 +60,16 @@ class Api::V1::SleepRecordsController < ApplicationController
 
   # GET /api/v1/users/:user_id/sleep_records/friends_sleep_records
   def friends_sleep_records
-    cache_key = "user_#{@user.id}_friends_sleep_records_#{1.week.ago.to_date}"
+    # Multi-level caching for high-traffic scenarios
+    cache_key = "user_#{@user.id}_friends_sleep_v3_#{Date.current}"
 
     friends_records = Rails.cache.fetch(cache_key, expires_in: 1.hours) do
-      @user.friends_sleep_records_last_week.to_a
+      # Use the optimized cached method
+      @user.friends_sleep_records_last_week_cached
     end
+
+    # Additional metadaa for large datasets
+    following_count = @user.following_count
 
     render json: {
       sleep_records: ActiveModel::Serializer::CollectionSerializer.new(
@@ -73,10 +78,13 @@ class Api::V1::SleepRecordsController < ApplicationController
       ),
       summary: {
         total_records: friends_records.size,
+        following_count: following_count,
         date_range: {
           from: 1.week.ago.to_date,
           to: Date.current
-        }
+        },
+        cached: true,
+        cache_expires_id: "1 hour"
       }
     }
   end
