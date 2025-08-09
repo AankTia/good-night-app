@@ -6,6 +6,17 @@ class SleepRecord < ApplicationRecord
 
   scope :ordered_by_created_time, -> { order(:created_at) }
   scope :completed, -> { where.not(wake_up_time: nil) }
+  scope :active, -> { where(wake_up_time: nil) }
+  scope :last_week, -> { where(created_at: 1.week.ago..Time.current) }
+  scope :last_month, -> { where(created_at: 1.month.ago..Time.current) }
+
+  # Duration-based scope (uses duration index)
+  scope :short_sleep, -> { completed.where('duration_seconds < ?', 6 * 3600) }
+  scope :normal_sleep, -> { completed.where(duration_seconds: (6 * 3600)..(9 * 3600))}
+  scope :long_sleep, -> { completed.where('duration_seconds > ?', 9 * 3600) }
+
+  # Batch operation scope
+  scope :for_users, ->(user_ids) { where(user_id: user_ids) }
 
   before_save :calculate_duration
 
