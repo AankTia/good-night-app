@@ -12,13 +12,24 @@ class Api::V1::SleepRecordsController < ApplicationController
       # Clock out - set wake up time
       active_record.update!(wake_up_time: Time.current)
       sleep_record = active_record
+
+      # Invalidate user statistics cache
+      invalidate_user_caches
     else
       # Clock in - create new sleep record
       sleep_record = @user.sleep_records.create!(sleep_time: Time.current)
     end
 
-    # Return all sleep records ordered by created time
-    sleep_records = @user.sleep_records.ordered_by_created_time.includes(:user)
+    # Use cached count for large dataset
+    total_records = Rails.cache.fetch("user_#{@user_id}_sleep_records_count", expires_in: 5.minutes) do
+      @user.sleep_records.count
+    end
+
+    # Return paginated results for large dataset
+    sleep_records = @user.sleep_records
+                         .ordered_by_created_time
+                         .includes(:user)
+                         .limit(20)  # Limit to prevent large payloads
 
     render json: {
       message: active_record ? 'Clocked out successfully' : 'Clocked in successfully',
@@ -26,7 +37,9 @@ class Api::V1::SleepRecordsController < ApplicationController
       all_records: ActiveModel::Serializer::CollectionSerializer.new(
         sleep_records,
         serializer: SleepRecordSerializer
-      )
+      ),
+      total_count: total_records,
+      pagination_notes: 'Showing latest 20 records. Use /sleep_records for full pagination.'
     }, status: active_record ? :ok : :created
   end
 
@@ -89,5 +102,13 @@ class Api::V1::SleepRecordsController < ApplicationController
         cache_expires_id: "1 hour"
       }
     }
+  end
+
+  private
+
+  def invalidate_user_caches
+    Rails.cache.delete("user_#{@user.id}_sleep_records_count")
+    Rails.cache.delete_matched("user_#{@user.id}_sleep_stats_*")
+    Rails.cache.delete_matched("user_#{@user.id}_friends_sleep_*")
   end
 end
