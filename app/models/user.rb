@@ -14,7 +14,7 @@ class User < ApplicationRecord
   end
 
   # Batch-optimized following check
-  def following?(user_od_id)
+  def following?(user_or_id)
     user_id = user_or_id.is_a?(User) ? user_or_id.id : user_or_id
 
     # Use the optimized index for single lookups
