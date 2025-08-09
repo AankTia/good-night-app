@@ -45,11 +45,23 @@ class Api::V1::SleepRecordsController < ApplicationController
 
   # GET  /api/v1/users/:user_id/sleep_records
   def index
-    sleep_records = @user.sleep_records
-                         .ordered_by_created_time
-                         .includes(:user)
-                         .page(params[:page])
-                         .per(params[:per_page] || 50)
+    page = params[:page]&.to_i || 1
+    per_page = [params[:per_page]&.to_i || 20, 100].min  # Max 100 per page
+
+    # Option for cursor-based pagination for very large datasets
+    if params[:cursor_id].present?
+      sleep_records = @user.sleep_records
+                           .where('id < ', params[:cursor_id])
+                           .ordered_by_created_time
+                           .includes(:user)
+                           .limit(per_page)
+    else
+      sleep_records = @user.sleep_records
+                           .ordered_by_created_time
+                           .includes(:user)
+                           .page(page)
+                           .per(per_page)
+    end
     
     render json: {
       sleep_records: ActiveModel::Serializer::CollectionSerializer.new(
@@ -57,9 +69,11 @@ class Api::V1::SleepRecordsController < ApplicationController
         serializer: SleepRecordSerializer
       ),
       pagination: {
-        current_page: sleep_records.current_page,
-        total_pages: sleep_records.total_pages,
-        total_count: sleep_records.total_count
+        current_page: params[:cursor_id].present? ? nil : sleep_records.current_page,
+        total_pages: params[:cursor_id].present? ? nil : sleep_records.total_pages,
+        total_count: params[:cursor_id].present? ? nil : sleep_records.total_count,
+        next_cursor: params[:cursor_id].present? ? sleep_records.last&.id : nil,
+        per_page: per_page
       }
     }
   end
