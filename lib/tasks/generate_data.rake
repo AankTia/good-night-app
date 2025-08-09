@@ -8,7 +8,7 @@ namespace :db do
     include FactoryBot::Syntax::Methods
 
     users = []
-    100.times do |i|
+    500.times do |i|
       users << create(:user)
       print "." if i % 10 == 0
     end
