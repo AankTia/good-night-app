@@ -4,7 +4,9 @@ class Api::V1::SleepRecordsController < ApplicationController
   # POST /api/v1/users/:user_id/sleep_records
   def create
     #  Check if user has an active (uncompleted) sleep record
-    active_record = @user.sleep_records.find_by(wake_up_time: nil)
+    active_record = @user.sleep_records
+                         .active
+                         .first
 
     if active_record
       # Clock out - set wake up time
