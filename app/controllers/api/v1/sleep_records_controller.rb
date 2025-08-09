@@ -118,6 +118,25 @@ class Api::V1::SleepRecordsController < ApplicationController
     }
   end
 
+  # GET /api/v1/users/:user_id/sleep_records/stats
+  def stats
+    period_days = params[:days]&.to_i || 30
+    period = period_days.days
+
+    stats = Rails.cache.fetch(
+      "user_#{@user_id}_sleep_stats_#{period_days}d",
+      expires_in: 2.hours
+    ) do
+      @user.sleep_stats(period)
+    end
+
+    render json: {
+      user_id: @user.id,
+      period_days: period_days,
+      statistics: stats
+    }
+  end
+
   private
 
   def invalidate_user_caches

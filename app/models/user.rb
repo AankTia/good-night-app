@@ -55,4 +55,20 @@ class User < ApplicationRecord
       followings.count
     end
   end
+
+  # Sleep statistics (uses duration index)
+  def sleep_stats(period = 1.month)
+    Rails.cache.fetch("user_#{id}_sleep_stats_#{period.inspect}", expires_in: 1.hour) do
+      records = sleep_records.completed
+                             .where(created_at: period.ago..Time.current)
+
+      {
+        total_records: records.count,
+        avg_duration: records.average(:duration_seconds)&.to_i,
+        min_duration: records.minimum(:duration_seconds),
+        max_duration: records.maximum(:duration_seconds),
+        total_sleep_time: records.sum(:duration_seconds)
+      }
+    end
+  end
 end

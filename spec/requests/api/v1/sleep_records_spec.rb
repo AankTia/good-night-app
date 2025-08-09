@@ -115,4 +115,20 @@ RSpec.describe 'Api::V1::SleepRecords', type: :request do
       expect(durations).to eq(durations.sort)
     end
   end
+
+  describe '(stats) GET /api/v1/users/:user_id/sleep_records/friends_sleep_records' do
+    before do
+      create_list(:sleep_record, 3, :completed, user: user)
+    end
+
+    it 'returns sleep records statistics' do
+      get "/api/v1/users/#{user.id}/sleep_records/stats"
+      expect(response).to have_http_status(:ok)
+
+      json = JSON.parse(response.body)
+      expect(json['user_id']).to be_present
+      expect(json['period_days']).to be_present
+      expect(json['statistics']).to be_present
+    end
+  end
 end

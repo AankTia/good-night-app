@@ -14,6 +14,7 @@ Rails.application.routes.draw do
         resources :sleep_records, only: [:index, :create, :show] do
           collection do
             get :friends_sleep_records
+            get :stats
           end
         end
 
