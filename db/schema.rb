@@ -35,8 +35,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_09_131911) do
     t.integer "following_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["follower_id", "following_id"], name: "index_user_followings_on_follower_id_and_following_id", unique: true
+    t.index ["follower_id", "created_at"], name: "idx_user_followings_time"
+    t.index ["follower_id", "following_id"], name: "idx_user_followings_unique", unique: true
     t.index ["follower_id"], name: "index_user_followings_on_follower_id"
+    t.index ["following_id", "follower_id"], name: "idx_user_followings_reverse"
     t.index ["following_id"], name: "index_user_followings_on_following_id"
   end
 

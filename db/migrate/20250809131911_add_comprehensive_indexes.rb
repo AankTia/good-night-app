@@ -33,5 +33,27 @@ class AddComprehensiveIndexes < ActiveRecord::Migration[7.1]
     add_index :sleep_records,
               [:duration_seconds, :user_id, :created_at],
               name: 'idx_sleep_records_duration_analysis'
+
+    # =========================================
+    # User Followings - Relationship Queries
+    # =========================================
+
+    # Optimized for finding all users a person follows
+    # (Already exists but ensuring optimal structure)
+    remove_index :user_followings, [:follower_id, :following_id] if index_exists?(:user_followings, [:follower_id, :following_id])
+    add_index :user_followings,
+              [:follower_id, :following_id],
+              unique: true,
+              name: 'idx_user_followings_unique'
+
+    # Optimized for finding followers of a user
+    add_index :user_followings,
+              [:following_id, :follower_id],
+              name: 'idx_user_followings_reverse'
+
+    # Time-based following analysis
+    add_index :user_followings,
+              [:follower_id, :created_at],
+              name: 'idx_user_followings_time'
   end
 end
