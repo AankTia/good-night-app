@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_05_072124) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_09_131911) do
   create_table "sleep_records", force: :cascade do |t|
     t.integer "user_id", null: false
     t.datetime "sleep_time", null: false
@@ -18,10 +18,15 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_05_072124) do
     t.integer "duration_seconds"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["created_at", "user_id"], name: "idx_sleep_records_time_user"
     t.index ["created_at"], name: "index_sleep_records_on_created_at"
+    t.index ["duration_seconds", "user_id", "created_at"], name: "idx_sleep_records_duration_analysis"
     t.index ["duration_seconds"], name: "index_sleep_records_on_duration_seconds"
     t.index ["sleep_time"], name: "index_sleep_records_on_sleep_time"
+    t.index ["user_id", "created_at", "duration_seconds"], name: "idx_sleep_records_user_time_duration"
     t.index ["user_id", "created_at"], name: "index_sleep_records_on_user_id_and_created_at"
+    t.index ["user_id", "duration_seconds", "created_at"], name: "idx_completed_sleep_records"
+    t.index ["user_id", "sleep_time"], name: "idx_active_sleep_records"
     t.index ["user_id"], name: "index_sleep_records_on_user_id"
   end
 
