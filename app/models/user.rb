@@ -13,8 +13,12 @@ class User < ApplicationRecord
     followings.create(following: user)
   end
 
-  def following?(user)
-    following_users.include?(user)
+  # Batch-optimized following check
+  def following?(user_od_id)
+    user_id = user_or_id.is_a?(User) ? user_or_id.id : user_or_id
+
+    # Use the optimized index for single lookups
+    followings.exists?(following_id: user_id)
   end
 
   def unfollow(user)
