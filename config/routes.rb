@@ -10,7 +10,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :users, only: [:show] do
+      resources :users, only: [:index, :show] do
         resources :sleep_records, only: [:index, :create, :show] do
           collection do
             get :friends_sleep_records
