@@ -137,9 +137,68 @@ async function selectUser(userId) {
 
     // Load initial data
     showLoading(true);
-    // await updateSleepStatus();
+    await updateSleepStatus();
     // await loadSleepRecords();
     showLoading(false);
+}
+
+// Sleep Records Functions
+async function updateSleepStatus() {
+    if (!AppState.currentUser) return;
+
+    try {
+        const response = await API.request(`/users/${AppState.currentUser.id}/sleep_records`);
+        const records = response.sleep_records || [];
+
+        // Find active record (no wake_up_time)
+        const activeRecord = records.find(record => !record.wake_up_time);
+
+        const statusIcon = document.getElementById('sleepIcon');
+        const statusText = document.getElementById('sleepStatusText');
+        const statusSubtext = document.getElementById('sleepSubtext');
+        const toggleBtn = document.getElementById('sleepToggleBtn');
+        const toggleText = document.getElementById('sleepToggleText');
+        const currentSleepInfo = document.getElementById('currentSleepInfo');
+
+        if (activeRecord) {
+            // User is currently sleeping
+            AppState.isActive = true;
+            AppState.currentSleepRecord = activeRecord;
+
+            statusIcon.className = 'fas fa-bed text-6xl text-green-400 mb-4';
+            statusText.textContent = 'Sleeping...';
+            statusSubtext.textContent = `Started at ${formatDateTime(activeRecord.sleep_time)}`;
+
+            toggleBtn.className = 'bg-gradient-to-r from-dawn-orange to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 px-8 rounded-full text-xl transition-all transform hover:scale-105 shadow-lg';
+            toggleText.innerHTML = '<i class="fas fa-stop mr-2"></i>Wake Up';
+
+            const sleepTime = new Date(activeRecord.sleep_time);
+            const duration = Math.floor((Date.now() - sleepTime.getTime()) / 1000);
+
+            currentSleepInfo.innerHTML = `
+                        <div class="space-y-2">
+                            <p><span class="text-gray-400">Started:</span> ${formatDateTime(activeRecord.sleep_time)}</p>
+                            <p><span class="text-gray-400">Duration:</span> ${formatDuration(duration)}</p>
+                        </div>
+                    `;
+        } else {
+            // User is not sleeping
+            AppState.isActive = false;
+            AppState.currentSleepRecord = null;
+
+            statusIcon.className = 'fas fa-moon text-6xl text-sleep-purple mb-4';
+            statusText.textContent = 'Ready to Sleep';
+            statusSubtext.textContent = 'Click the button below to start tracking';
+
+            toggleBtn.className = 'bg-gradient-to-r from-sleep-purple to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-full text-xl transition-all transform hover:scale-105 shadow-lg';
+            toggleText.innerHTML = '<i class="fas fa-play mr-2"></i>Clock In';
+
+            currentSleepInfo.innerHTML = '<p class="text-gray-300">No active sleep session</p>';
+        }
+
+    } catch (error) {
+        console.error('Error updating sleep status:', error);
+    }
 }
 
 // Event Listeners
