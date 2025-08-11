@@ -1,3 +1,40 @@
+// Application State
+const AppState = {
+    currentUser: null,
+    isActive: false,
+    currentSleepRecord: null,
+    apiBase: 'http://localhost:3000/api/v1' // Adjust this to your Rails API URL
+};
+
+// Utility Functions
+const API = {
+    async request(endpoint, options = {}) {
+        const url = `${AppState.apiBase}${endpoint}`;
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            ...options
+        };
+
+        try {
+            const response = await fetch(url, config);
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'API request failed');
+            }
+
+            return data;
+        } catch (error) {
+            console.error('API Error:', error);
+            showNotification(error.message, 'error');
+            throw error;
+        }
+    }
+};
+
 // Tab Management
 function initializeTabs() {
     const tabButtons = document.querySelectorAll('.tab-btn');
@@ -42,26 +79,6 @@ function initializeTabs() {
     firstTab.classList.remove('text-gray-400');
 }
 
-// Mock Users (since we don't have a users endpoint)
-async function createMockUsers() {
-    // This would normally be handled by your Rails API
-    // For demo purposes, we'll store users in localStorage
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-
-    if (users.length === 0) {
-        const mockUsers = [
-            { id: 1, name: 'Alice Johnson' },
-            { id: 2, name: 'Bob Smith' },
-            { id: 3, name: 'Charlie Brown' },
-            { id: 4, name: 'Diana Prince' }
-        ];
-        localStorage.setItem('users', JSON.stringify(mockUsers));
-        return mockUsers;
-    }
-
-    return users;
-}
-
 async function createUser(name) {
     const users = JSON.parse(localStorage.getItem('users') || '[]');
     const newUser = {
@@ -74,24 +91,29 @@ async function createUser(name) {
 }
 
 async function loadUsers() {
-    const users = await createMockUsers();
+    try {
+        const response = await API.request('/users');
+        const users = response.users;
 
-    // Populate user selects
-    const selects = [
-        document.getElementById('userSelect'),
-        document.getElementById('mainUserSelect'),
-        document.getElementById('availableUsersSelect')
-    ];
+        // Populate user selects
+        const selects = [
+            document.getElementById('userSelect'),
+            document.getElementById('mainUserSelect'),
+            document.getElementById('availableUsersSelect')
+        ];
 
-    selects.forEach(select => {
-        select.innerHTML = '<option value="">Select User</option>';
-        users.forEach(user => {
-            const option = document.createElement('option');
-            option.value = user.id;
-            option.textContent = user.name;
-            select.appendChild(option);
+        selects.forEach(select => {
+            select.innerHTML = '<option value="">Select User</option>';
+            users.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.id;
+                option.textContent = user.name;
+                select.appendChild(option);
+            });
         });
-    });
+    } catch (error) {
+        console.error('Error fetch users:', error);
+    }
 }
 
 // Event Listeners
