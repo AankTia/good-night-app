@@ -35,6 +35,12 @@ const API = {
     }
 };
 
+function showLoading(show = true) {
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.classList.toggle('hidden', !show);
+    overlay.classList.toggle('flex', show);
+}
+
 // Tab Management
 function initializeTabs() {
     const tabButtons = document.querySelectorAll('.tab-btn');
@@ -116,6 +122,26 @@ async function loadUsers() {
     }
 }
 
+// User Management
+async function selectUser(userId) {
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const user = users.find(u => u.id == userId);
+
+    if (!user) return;
+
+    AppState.currentUser = user;
+
+    // Switch screens
+    document.getElementById('userSelectionScreen').classList.add('hidden');
+    document.getElementById('mainAppScreen').classList.remove('hidden');
+
+    // Load initial data
+    showLoading(true);
+    // await updateSleepStatus();
+    // await loadSleepRecords();
+    showLoading(false);
+}
+
 // Event Listeners
 document.addEventListener('DOMContentLoaded', async function () {
     // Initialize tabs
@@ -123,4 +149,19 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Load users
     await loadUsers();
+
+    // User selection
+    document.getElementById('mainUserSelect').addEventListener('change', function () {
+        const userId = this.value;
+        if (userId) {
+            selectUser(userId);
+        }
+    });
+
+    document.getElementById('userSelect').addEventListener('change', function () {
+        const userId = this.value;
+        if (userId) {
+            selectUser(userId);
+        }
+    });
 });
