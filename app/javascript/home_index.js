@@ -64,8 +64,8 @@ function showNotification(message, type = 'info') {
     // Create notification element
     const notification = document.createElement('div');
     notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${type === 'error' ? 'bg-red-500' :
-            type === 'success' ? 'bg-green-500' :
-                'bg-blue-500'
+        type === 'success' ? 'bg-green-500' :
+            'bg-blue-500'
         } text-white`;
     notification.textContent = message;
     document.body.appendChild(notification);
@@ -335,6 +335,50 @@ async function loadFollowings() {
         console.error('Error loading followings:', error);
     }
 }
+async function followUser() {
+    const targetUserId = document.getElementById('availableUsersSelect').value;
+    if (!targetUserId || !AppState.currentUser) return;
+
+    showLoading(true);
+
+    try {
+        await API.request(`/users/${AppState.currentUser.id}/followings`, {
+            method: 'POST',
+            body: JSON.stringify({ target_user_id: targetUserId })
+        });
+
+        showNotification('Successfully followed user!', 'success');
+        document.getElementById('availableUsersSelect').value = '';
+        await loadFollowings();
+        await loadLeaderboard();
+
+    } catch (error) {
+        console.error('Error following user:', error);
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function unfollowUser(userId) {
+    if (!AppState.currentUser) return;
+
+    showLoading(true);
+
+    try {
+        await API.request(`/users/${AppState.currentUser.id}/followings/${userId}`, {
+            method: 'DELETE'
+        });
+
+        showNotification('Successfully unfollowed user!', 'success');
+        await loadFollowings();
+        await loadLeaderboard();
+
+    } catch (error) {
+        console.error('Error unfollowing user:', error);
+    } finally {
+        showLoading(false);
+    }
+}
 
 // Leaderboard Functions
 async function loadLeaderboard() {
@@ -410,4 +454,10 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Sleep toggle button
     document.getElementById('sleepToggleBtn').addEventListener('click', toggleSleep);
+
+    // Follow user button
+    document.getElementById('followUserBtn').addEventListener('click', followUser);
 });
+
+// Make unfollowUser available globally
+window.unfollowUser = unfollowUser;
