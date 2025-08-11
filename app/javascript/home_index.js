@@ -298,6 +298,55 @@ async function loadFollowings() {
     }
 }
 
+// Leaderboard Functions
+async function loadLeaderboard() {
+    if (!AppState.currentUser) return;
+
+    try {
+        const response = await API.request(`/users/${AppState.currentUser.id}/sleep_records/friends_sleep_records`);
+        const records = response.sleep_records || [];
+
+        const leaderboardList = document.getElementById('leaderboardList');
+
+        if (records.length === 0) {
+            leaderboardList.innerHTML = '<p class="text-gray-300 text-center py-8">No friends data available</p>';
+            return;
+        }
+
+        leaderboardList.innerHTML = records.map((record, index) => `
+                    <div class="flex items-center justify-between py-4 px-4 bg-white/5 rounded-lg mb-3 border-l-4 ${index === 0 ? 'border-yellow-400' :
+                index === 1 ? 'border-gray-300' :
+                    index === 2 ? 'border-orange-400' :
+                        'border-purple-400'
+            }">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center ${index === 0 ? 'bg-yellow-400 text-black' :
+                index === 1 ? 'bg-gray-300 text-black' :
+                    index === 2 ? 'bg-orange-400 text-black' :
+                        'bg-purple-400'
+            } font-bold">
+                                ${index + 1}
+                            </div>
+                            <div>
+                                <p class="font-semibold">${record.user.name}</p>
+                                <p class="text-sm text-gray-400">
+                                    ${formatDateTime(record.sleep_time)} - ${formatDateTime(record.wake_up_time)}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xl font-bold text-green-400">
+                                ${formatDuration(record.duration_seconds)}
+                            </p>
+                        </div>
+                    </div>
+                `).join('');
+
+    } catch (error) {
+        console.error('Error loading leaderboard:', error);
+    }
+}
+
 // Event Listeners
 document.addEventListener('DOMContentLoaded', async function () {
     // Initialize tabs
