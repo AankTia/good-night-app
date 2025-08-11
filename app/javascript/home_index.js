@@ -41,6 +41,24 @@ function showLoading(show = true) {
     overlay.classList.toggle('flex', show);
 }
 
+function formatDateTime(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleString();
+}
+
+function formatDuration(seconds) {
+    if (!seconds) return 'N/A';
+
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+
+    if (hours > 0) {
+        return `${hours}h ${minutes}m`;
+    } else {
+        return `${minutes}m`;
+    }
+}
+
 // Tab Management
 function initializeTabs() {
     const tabButtons = document.querySelectorAll('.tab-btn');
@@ -138,7 +156,7 @@ async function selectUser(userId) {
     // Load initial data
     showLoading(true);
     await updateSleepStatus();
-    // await loadSleepRecords();
+    await loadSleepRecords();
     showLoading(false);
 }
 
@@ -198,6 +216,53 @@ async function updateSleepStatus() {
 
     } catch (error) {
         console.error('Error updating sleep status:', error);
+    }
+}
+
+async function loadSleepRecords() {
+    if (!AppState.currentUser) return;
+
+    try {
+        const response = await API.request(`/users/${AppState.currentUser.id}/sleep_records`);
+        const records = response.sleep_records || [];
+
+        const recordsList = document.getElementById('sleepRecordsList');
+
+        if (records.length === 0) {
+            recordsList.innerHTML = '<p class="text-gray-300 text-center py-8">No sleep records yet</p>';
+            return;
+        }
+
+        recordsList.innerHTML = records.map(record => `
+                    <div class="bg-white/5 rounded-lg p-4 mb-4 border border-white/10">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas ${record.wake_up_time ? 'fa-bed' : 'fa-moon'} text-2xl ${record.wake_up_time ? 'text-green-400' : 'text-yellow-400'}"></i>
+                                <div>
+                                    <p class="font-semibold">
+                                        ${record.wake_up_time ? 'Completed Sleep' : 'Currently Sleeping'}
+                                    </p>
+                                    <p class="text-sm text-gray-400">
+                                        Started: ${formatDateTime(record.sleep_time)}
+                                    </p>
+                                    ${record.wake_up_time ? `
+                                        <p class="text-sm text-gray-400">
+                                            Ended: ${formatDateTime(record.wake_up_time)}
+                                        </p>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-2xl font-bold ${record.duration_seconds ? 'text-green-400' : 'text-yellow-400'}">
+                                    ${record.duration_seconds ? formatDuration(record.duration_seconds) : 'Active'}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+    } catch (error) {
+        console.error('Error loading sleep records:', error);
     }
 }
 
