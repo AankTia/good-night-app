@@ -266,6 +266,38 @@ async function loadSleepRecords() {
     }
 }
 
+// Friends Functions
+async function loadFollowings() {
+    if (!AppState.currentUser) return;
+
+    try {
+        const response = await API.request(`/users/${AppState.currentUser.id}/followings`);
+        const followings = response.followings || [];
+
+        const friendsList = document.getElementById('friendsList');
+
+        if (followings.length === 0) {
+            friendsList.innerHTML = '<p class="text-gray-300 text-center">Not following anyone yet</p>';
+            return;
+        }
+
+        friendsList.innerHTML = followings.map(friend => `
+                    <div class="flex items-center justify-between py-2 px-3 bg-white/5 rounded-lg mb-2">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-user text-blue-400"></i>
+                            <span>${friend.name}</span>
+                        </div>
+                        <button onclick="unfollowUser(${friend.id})" class="text-red-400 hover:text-red-300 transition-colors">
+                            <i class="fas fa-user-minus"></i>
+                        </button>
+                    </div>
+                `).join('');
+
+    } catch (error) {
+        console.error('Error loading followings:', error);
+    }
+}
+
 // Event Listeners
 document.addEventListener('DOMContentLoaded', async function () {
     // Initialize tabs
