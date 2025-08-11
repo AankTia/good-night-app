@@ -429,6 +429,45 @@ async function loadLeaderboard() {
     }
 }
 
+// Modal Management
+function showCreateUserModal() {
+    const modal = document.getElementById('createUserModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function hideCreateUserModal() {
+    const modal = document.getElementById('createUserModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.getElementById('newUserName').value = '';
+}
+
+async function handleCreateUser() {
+    const name = document.getElementById('newUserName').value.trim();
+    if (!name) {
+        showNotification('Please enter a name', 'error');
+        return;
+    }
+
+    showLoading(true);
+
+    try {
+        const newUser = await createUser(name);
+        await loadUsers();
+        hideCreateUserModal();
+        showNotification('Profile created successfully!', 'success');
+
+        // Auto-select the new user
+        document.getElementById('mainUserSelect').value = newUser.id;
+
+    } catch (error) {
+        console.error('Error creating user:', error);
+    } finally {
+        showLoading(false);
+    }
+}
+
 // Event Listeners
 document.addEventListener('DOMContentLoaded', async function () {
     // Initialize tabs
@@ -457,6 +496,12 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Follow user button
     document.getElementById('followUserBtn').addEventListener('click', followUser);
+
+    // Create user buttons
+    document.getElementById('createUserBtn').addEventListener('click', showCreateUserModal);
+    document.getElementById('newUserBtn').addEventListener('click', showCreateUserModal);
+    document.getElementById('cancelCreateUser').addEventListener('click', hideCreateUserModal);
+    document.getElementById('confirmCreateUser').addEventListener('click', handleCreateUser);
 });
 
 // Make unfollowUser available globally
