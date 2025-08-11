@@ -502,6 +502,13 @@ document.addEventListener('DOMContentLoaded', async function () {
     document.getElementById('newUserBtn').addEventListener('click', showCreateUserModal);
     document.getElementById('cancelCreateUser').addEventListener('click', hideCreateUserModal);
     document.getElementById('confirmCreateUser').addEventListener('click', handleCreateUser);
+
+    // Enter key support for user creation
+    document.getElementById('newUserName').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            handleCreateUser();
+        }
+    });
 });
 
 // Make unfollowUser available globally
