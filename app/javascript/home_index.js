@@ -59,6 +59,23 @@ function formatDuration(seconds) {
     }
 }
 
+
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${type === 'error' ? 'bg-red-500' :
+            type === 'success' ? 'bg-green-500' :
+                'bg-blue-500'
+        } text-white`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
 // Tab Management
 function initializeTabs() {
     const tabButtons = document.querySelectorAll('.tab-btn');
@@ -161,6 +178,27 @@ async function selectUser(userId) {
 }
 
 // Sleep Records Functions
+async function toggleSleep() {
+    if (!AppState.currentUser) return;
+
+    showLoading(true);
+
+    try {
+        const response = await API.request(`/users/${AppState.currentUser.id}/sleep_records`, {
+            method: 'POST'
+        });
+
+        showNotification(response.message, 'success');
+        await updateSleepStatus();
+        await loadSleepRecords();
+
+    } catch (error) {
+        console.error('Error toggling sleep:', error);
+    } finally {
+        showLoading(false);
+    }
+}
+
 async function updateSleepStatus() {
     if (!AppState.currentUser) return;
 
@@ -369,4 +407,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             selectUser(userId);
         }
     });
+
+    // Sleep toggle button
+    document.getElementById('sleepToggleBtn').addEventListener('click', toggleSleep);
 });
