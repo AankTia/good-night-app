@@ -509,6 +509,13 @@ document.addEventListener('DOMContentLoaded', async function () {
             handleCreateUser();
         }
     });
+
+    // Update sleep status periodically for active sessions
+    setInterval(() => {
+        if (AppState.isActive) {
+            updateSleepStatus();
+        }
+    }, 30000); // Update every 30 seconds
 });
 
 // Make unfollowUser available globally
