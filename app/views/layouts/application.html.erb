@@ -9,11 +9,23 @@
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'night-blue': '#1e1b4b',
+                        'sleep-purple': '#6366f1',
+                        'dawn-orange': '#f97316'
+                    }
+                }
+            }
+        }
+    </script>
   </head>
 
-  <body>
-    <main class="container mx-auto mt-28 px-5 flex">
-      <%= yield %>
-    </main>
+  <body class="bg-gradient-to-br from-night-blue via-purple-900 to-indigo-900 min-h-screen text-white">
+    <%= yield %>
   </body>
 </html>

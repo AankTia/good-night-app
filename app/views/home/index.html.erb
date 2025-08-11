@@ -1,4 +1,181 @@
-<div>
-  <h1 class="font-bold text-4xl">Home#index</h1>
-  <p>Find me in app/views/home/index.html.erb</p>
+<!-- Navigation -->
+<nav class="bg-black/20 backdrop-blur-sm border-b border-white/10">
+    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+            <i class="fas fa-moon text-2xl text-sleep-purple"></i>
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-sleep-purple to-dawn-orange bg-clip-text text-transparent">
+                Good Night
+            </h1>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+            <select id="userSelect" class="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white">
+                <option value="">Select User</option>
+            </select>
+            <button id="newUserBtn" class="bg-sleep-purple hover:bg-purple-600 px-4 py-2 rounded-lg transition-colors">
+                <i class="fas fa-user-plus mr-2"></i>New User
+            </button>
+        </div>
+    </div>
+</nav>
+
+<div class="container mx-auto px-4 py-8">
+    <!-- User Selection Screen -->
+    <div id="userSelectionScreen" class="text-center">
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 max-w-md mx-auto border border-white/20">
+            <i class="fas fa-bed text-6xl text-sleep-purple mb-6"></i>
+            <h2 class="text-3xl font-bold mb-4">Welcome to Good Night</h2>
+            <p class="text-gray-300 mb-6">Track your sleep patterns and connect with friends</p>
+            
+            <div class="space-y-4">
+                <select id="mainUserSelect" class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white">
+                    <option value="">Choose your profile</option>
+                </select>
+                <button id="createUserBtn" class="w-full bg-gradient-to-r from-sleep-purple to-purple-600 hover:from-purple-600 hover:to-purple-700 py-3 rounded-lg transition-all transform hover:scale-105">
+                    Create New Profile
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Screen -->
+    <div id="mainAppScreen" class="hidden">
+        <!-- Sleep Clock In/Out Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div class="lg:col-span-2">
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+                    <div class="text-center">
+                        <div id="sleepStatus" class="mb-6">
+                            <i id="sleepIcon" class="fas fa-moon text-6xl text-sleep-purple mb-4"></i>
+                            <h2 id="sleepStatusText" class="text-3xl font-bold mb-2">Ready to Sleep</h2>
+                            <p id="sleepSubtext" class="text-gray-300">Click the button below to start tracking</p>
+                        </div>
+                        
+                        <button id="sleepToggleBtn" class="bg-gradient-to-r from-sleep-purple to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-full text-xl transition-all transform hover:scale-105 shadow-lg">
+                            <i class="fas fa-play mr-2"></i>
+                            <span id="sleepToggleText">Clock In</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Sleep Info -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-clock mr-2 text-dawn-orange"></i>
+                    Current Sleep
+                </h3>
+                <div id="currentSleepInfo">
+                    <p class="text-gray-300">No active sleep session</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="mb-6">
+            <div class="flex space-x-1 bg-white/5 p-1 rounded-lg">
+                <button class="tab-btn active flex-1 py-2 px-4 rounded-md transition-all" data-tab="records">
+                    <i class="fas fa-history mr-2"></i>Sleep Records
+                </button>
+                <button class="tab-btn flex-1 py-2 px-4 rounded-md transition-all" data-tab="friends">
+                    <i class="fas fa-users mr-2"></i>Friends
+                </button>
+                <button class="tab-btn flex-1 py-2 px-4 rounded-md transition-all" data-tab="leaderboard">
+                    <i class="fas fa-trophy mr-2"></i>Leaderboard
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Sleep Records Tab -->
+            <div id="recordsTab" class="tab-panel active">
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20">
+                    <div class="p-6 border-b border-white/10">
+                        <h3 class="text-2xl font-bold flex items-center">
+                            <i class="fas fa-bed mr-2 text-sleep-purple"></i>
+                            Your Sleep Records
+                        </h3>
+                    </div>
+                    <div id="sleepRecordsList" class="p-6">
+                        <!-- Records will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Friends Tab -->
+            <div id="friendsTab" class="tab-panel hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Follow New Friend -->
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                        <h3 class="text-xl font-bold mb-4 flex items-center">
+                            <i class="fas fa-user-plus mr-2 text-green-400"></i>
+                            Follow Friend
+                        </h3>
+                        <div class="space-y-4">
+                            <select id="availableUsersSelect" class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white">
+                                <option value="">Select a user to follow</option>
+                            </select>
+                            <button id="followUserBtn" class="w-full bg-green-500 hover:bg-green-600 py-2 rounded-lg transition-colors">
+                                Follow User
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Current Friends -->
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                        <h3 class="text-xl font-bold mb-4 flex items-center">
+                            <i class="fas fa-users mr-2 text-blue-400"></i>
+                            Following
+                        </h3>
+                        <div id="friendsList">
+                            <!-- Friends will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboard Tab -->
+            <div id="leaderboardTab" class="tab-panel hidden">
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20">
+                    <div class="p-6 border-b border-white/10">
+                        <h3 class="text-2xl font-bold flex items-center">
+                            <i class="fas fa-trophy mr-2 text-yellow-400"></i>
+                            Friends Sleep Leaderboard
+                            <span class="text-sm font-normal text-gray-400 ml-2">(Last Week)</span>
+                        </h3>
+                    </div>
+                    <div id="leaderboardList" class="p-6">
+                        <!-- Leaderboard will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create User Modal -->
+<div id="createUserModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 max-w-md w-full mx-4 border border-white/20">
+        <h3 class="text-2xl font-bold mb-6 text-center">Create New Profile</h3>
+        <div class="space-y-4">
+            <input type="text" id="newUserName" placeholder="Enter your name" class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400">
+            <div class="flex space-x-4">
+                <button id="cancelCreateUser" class="flex-1 bg-gray-600 hover:bg-gray-700 py-3 rounded-lg transition-colors">
+                    Cancel
+                </button>
+                <button id="confirmCreateUser" class="flex-1 bg-sleep-purple hover:bg-purple-600 py-3 rounded-lg transition-colors">
+                    Create Profile
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
+    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-center border border-white/20">
+        <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-sleep-purple mx-auto mb-4"></div>
+        <p class="text-xl">Loading...</p>
+    </div>
 </div>
