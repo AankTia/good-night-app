@@ -1,4 +1,4 @@
-class ApplicationController < ActionController::API
+class ApplicationController < ActionController::Base
   include PerformanceMonitoring
   
   rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
