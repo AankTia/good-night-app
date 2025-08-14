@@ -528,12 +528,14 @@ paths:
       - name: user_id
         in: path
         description: ID of the user
+        example: 1
         required: true
         schema:
           type: integer
       - name: target_user_id
         in: path
         description: ID of the user to unfollow
+        example: 2
         required: true
         schema:
           type: integer
@@ -542,6 +544,16 @@ paths:
           description: Successfully unfollowed
         '404':
           description: Following not found
+        '422':
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid parameters
 servers:
 - url: http://{defaultHost}
   variables:
