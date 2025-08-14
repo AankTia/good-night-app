@@ -57,7 +57,7 @@ RSpec.describe 'api/sleep_records', type: :request do
           properties: {
             error: { type: :string, example: 'User not found' }
           }
-          
+
         let(:user_id) { 'invalid' }
         run_test!
       end
@@ -126,6 +126,102 @@ RSpec.describe 'api/sleep_records', type: :request do
       response '404', 'Record not found' do
         let(:user_id) { 1 }
         let(:id) { 'invalid' }
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v1/users/{user_id}/sleep_records' do
+    get 'List' do
+      tags 'Sleep Records'
+      produces 'application/json'
+      description 'List all sleep records for a given user with pagination'
+      parameter name: 'user_id', in: :path, type: :integer, required: true, description: 'ID of the user', example: 1
+      parameter name: :page, in: :query, type: :integer, description: 'Page number for pagination', example: 1
+      parameter name: :per_page, in: :query, type: :integer, description: 'Number of records per page', example: 10
+
+      response '200', 'Records found' do
+        schema type: :object,
+          properties: {
+            sleep_records: {
+              type: :array,
+              items: { '$ref': '#/components/schemas/SleepRecord' }
+            },
+            pagination: {
+              type: :object,
+              properties: {
+                current_page: { type: :integer, example: 1 },
+                total_pages: { type: :integer, example: 5 },
+                total_count: { type: :integer, example: 50 },
+                next_cursor: { type: :integer, nullable: true, example: 11 },
+                per_page: { type: :integer, example: 10 }
+              }
+            }
+          }
+
+        let(:user_id) { 1 }
+        let(:page) { 1 }
+        let(:per_page) { 10 }
+
+        run_test!
+      end
+
+      response '404', 'User not found' do
+        schema type: :object,
+          properties: {
+            error: { type: :string, example: 'User not found' }
+          }
+
+        let(:user_id) { 'invalid' }
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v1/users/{user_id}/sleep_records/friends_sleep_records' do
+    get 'Friends Sleep Records' do
+      tags 'Sleep Records'
+      produces 'application/json'
+      description 'Get sleep records of friends for a given user'
+      parameter name: 'user_id', in: :path, type: :integer, required: true, description: 'ID of the user', example: 1
+
+      response '200', 'Records found' do
+        schema type: :object,
+          properties: {
+            sleep_records: {
+              type: :array,
+              items: { '$ref': '#/components/schemas/SleepRecord' }
+            },
+            summary: {
+              type: :object,
+              properties: {
+                total_records: { type: :integer, example: 20 },
+                following_count: { type: :integer, example: 5 },
+                date_range: {
+                  type: :object,
+                  properties: {
+                    from: { type: :string, format: 'date', example: '2025-07-01' },
+                    to: { type: :string, format: 'date', example: '2025-07-08' }
+                  }
+                },
+                cached: { type: :boolean, example: true },
+                cache_expires_id: { type: :string, example: '1 hour' }
+              }
+            }
+          }
+
+        let(:user_id) { 1 }
+
+        run_test!
+      end
+
+      response '404', 'User not found' do
+        schema type: :object,
+          properties: {
+            error: { type: :string, example: 'User not found' }
+          }
+
+        let(:user_id) { 'invalid' }
         run_test!
       end
     end

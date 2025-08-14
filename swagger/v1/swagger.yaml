@@ -79,6 +79,72 @@ paths:
                     example: User not found
         '422':
           description: Invalid parameters
+    get:
+      summary: List
+      tags:
+      - Sleep Records
+      description: List all sleep records for a given user with pagination
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        description: ID of the user
+        example: 1
+        schema:
+          type: integer
+      - name: page
+        in: query
+        description: Page number for pagination
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: Number of records per page
+        example: 10
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Records found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sleep_records:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/SleepRecord"
+                  pagination:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 1
+                      total_pages:
+                        type: integer
+                        example: 5
+                      total_count:
+                        type: integer
+                        example: 50
+                      next_cursor:
+                        type: integer
+                        nullable: true
+                        example: 11
+                      per_page:
+                        type: integer
+                        example: 10
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User not found
   "/api/v1/users/{user_id}/sleep_records/{id}":
     get:
       summary: Detail
@@ -156,6 +222,68 @@ paths:
                 - sleep_record
         '404':
           description: Record not found
+  "/api/v1/users/{user_id}/sleep_records/friends_sleep_records":
+    get:
+      summary: Friends Sleep Records
+      tags:
+      - Sleep Records
+      description: Get sleep records of friends for a given user
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        description: ID of the user
+        example: 1
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Records found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sleep_records:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/SleepRecord"
+                  summary:
+                    type: object
+                    properties:
+                      total_records:
+                        type: integer
+                        example: 20
+                      following_count:
+                        type: integer
+                        example: 5
+                      date_range:
+                        type: object
+                        properties:
+                          from:
+                            type: string
+                            format: date
+                            example: '2025-07-01'
+                          to:
+                            type: string
+                            format: date
+                            example: '2025-07-08'
+                      cached:
+                        type: boolean
+                        example: true
+                      cache_expires_id:
+                        type: string
+                        example: 1 hour
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User not found
 servers:
 - url: http://{defaultHost}
   variables:
