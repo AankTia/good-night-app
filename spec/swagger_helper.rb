@@ -31,7 +31,30 @@ RSpec.configure do |config|
             }
           }
         }
-      ]
+      ],
+      components: {
+        schemas: {
+          SleepRecord: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              sleep_time: { type: :string, format: 'date-time' },
+              wake_up_time: { type: :string, format: 'date-time' },
+              duration_seconds: { type: :integer },
+              created_at: { type: :string, format: 'date-time' },
+              user: {
+                type: :object,
+                properties: {
+                  id: { type: :integer },
+                  name: { type: :string },
+                  created_at: { type: :string, format: 'date-time' }
+                }
+              }
+            },
+            required: [ 'id', 'sleep_time', 'wake_up_time', 'duration_seconds', 'created_at', 'user' ]
+          }
+        }
+      }
     }
   }
 
