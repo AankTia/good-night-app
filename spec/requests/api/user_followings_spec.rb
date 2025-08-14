@@ -7,24 +7,43 @@ RSpec.describe 'user_followings', type: :request do
     get 'List user followings' do
       tags 'User Followings'
       produces 'application/json'
-      parameter name: :user_id, in: :path, type: :integer, description: 'ID of the user'
+      parameter name: :user_id, in: :path, type: :integer, description: 'ID of the user', example: 1
 
       response '200', 'Followings found' do
-        schema type: :array, items: {
-          type: :object,
-          properties: {
-            id: { type: :integer },
-            name: { type: :string, example: 'John Doe' },
-            created_at: { type: :string, format: 'date-time' }
-          },
-          required: ['id', 'name', 'created_at']
-        }
+        schema type: :object,
+                properties: {
+                  followings: {
+                    type: :array,
+                    items: {
+                      type: :object,
+                      properties: {
+                        id: { type: :integer },
+                        name: { type: :string, example: 'John Doe' },
+                        created_at: { type: :string, format: 'date-time', example: '2023-10-01T12:00:00Z' },
+                      },
+                      required: ['id', 'name', 'created_at']
+                    }
+                  },
+                  pagination: {
+                    type: :object,
+                    properties: {
+                      current_page: { type: :integer, example: 1 },
+                      total_pages: { type: :integer, example: 10 },
+                      total_count: { type: :integer, example: 100 }
+                    }
+                  }
+                }
 
         let(:user_id) { 1 }
         run_test!
       end
 
       response '404', 'User not found' do
+        schema type: :object,
+               properties: {
+                 error: { type: :string, example: 'User not found' }
+               }
+               
         let(:user_id) { 9999 } # Assuming this user does not exist
         run_test!
       end
