@@ -4,11 +4,27 @@ info:
   title: API V1
   version: v1
 paths:
-  "/api/v1/users/1/sleep_records/1":
+  "/api/v1/users/{user_id}/sleep_records/{id}":
     get:
       summary: Detail
       tags:
       - Sleep Records
+      description: Get details of a specific sleep record for a given user
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        description: ID of the user
+        example: 1
+        schema:
+          type: integer
+      - name: id
+        in: path
+        required: true
+        description: ID of the sleep record
+        example: 1
+        schema:
+          type: integer
       responses:
         '200':
           description: Record found
@@ -18,23 +34,51 @@ paths:
                 type: object
                 properties:
                   sleep_record:
-                    id:
-                      type: integer
-                    sleep_time:
-                      type: string
-                      format: date-time
-                    wake_up_time: '2025-07-02T20:28:47Z'
-                    duration_hours: 7.0
-                    duration_seconds: 25200
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      sleep_time:
+                        type: string
+                        format: date-time
+                      wake_up_time:
+                        type: string
+                        format: date-time
+                      duration_seconds:
+                        type: integer
+                      created_at:
+                        type: string
+                        format: date-time
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          name:
+                            type: string
+                          created_at:
+                            type: string
+                            format: date-time
+                    required:
+                    - id
+                    - sleep_time
+                    - wake_up_time
+                    - duration_seconds
+                    - created_at
+                    - user
+                example:
+                  sleep_record:
+                    id: 1
+                    sleep_time: '2025-07-02T20:28:47Z'
+                    wake_up_time: '2025-07-03T05:28:47Z'
+                    duration_seconds: 32400
                     created_at: '2025-08-13T14:28:03Z'
                     user:
                       id: 1
                       name: Jona Davis I
                       created_at: '2025-08-13T14:27:38Z'
                 required:
-                - id
-                - title
-                - content
+                - sleep_record
         '404':
           description: Record not found
 servers:
