@@ -54,27 +54,54 @@ RSpec.describe 'user_followings', type: :request do
     post 'Create a following' do
       tags 'User Followings'
       produces 'application/json'
-      parameter name: :user_id, in: :path, type: :integer, description: 'ID of the user'
-      parameter name: :following_id, in: :query, type: :integer, description: 'ID of the user to follow'
+      parameter name: :user_id, in: :path, type: :integer, description: 'ID of the user', example: 1
+      parameter name: :following_id, in: :query, type: :integer, description: 'ID of the user to follow', example: 2
 
       response '201', 'Following created' do
         schema type: :object,
                properties: {
-                 id: { type: :integer },
-                 follower_id: { type: :integer },
-                 following_id: { type: :integer },
-                 created_at: { type: :string, format: 'date-time' }
+                 message: { type: :string, example: 'Successfully followed Kathyrn Mann VM' },
+                 following: {
+                   type: :object,
+                   properties: {
+                     id: { type: :integer, example: 1 },
+                     name: { type: :string, example: 'Kathyrn Mann VM1' },
+                     created_at: { type: :string, format: 'date-time', example: '2023-10-01T12:00:00Z' }
+                   }
+                 }
                },
-               required: ['id', 'follower_id', 'following_id', 'created_at']
+               required: ['id', 'name', 'created_at']
 
         let(:user_id) { 1 }
         let(:following_id) { 2 } # Assuming this user exists
         run_test!
       end
 
-      response '422', 'Invalid parameters' do
+      response '404', 'User or target user not found' do
+        schema type: :object,
+               properties: {
+                 error: { type: :string, example: 'Record not found' }
+               }
+
+        let(:user_id) { 9999 } # Assuming this user does not exist
+        let(:following_id) { 2 } # Assuming this user exists
+        run_test!
+      end
+
+      response '422', 'Already following user or invalid target' do
+        schema type: :object,
+               properties: {
+                 error: { type: :string, example: 'Unable to follow user' },
+                 details: { 
+                  type: :object,
+                  properties: {
+                    details: { type: :string, example: 'Already following this user or invalid target' }
+                  }
+                }
+              }
+
         let(:user_id) { 1 }
-        let(:following_id) { nil } # Missing following_id
+        let(:following_id) { 2 }
         run_test!
       end
     end
