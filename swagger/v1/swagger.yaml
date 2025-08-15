@@ -1,0 +1,515 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/api/v1/users/{user_id}/sleep_records":
+    post:
+      summary: Create or Update Sleep Record
+      tags:
+      - Sleep Records
+      description: Create a new sleep record or update an existing one for a given
+        user
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        description: ID of the user
+        example: 1
+        schema:
+          type: integer
+      responses:
+        '201':
+          description: Record created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Sleep record created successfully
+                  current_record:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      sleep_time:
+                        type: string
+                        format: date-time
+                      wake_up_time:
+                        type: string
+                        format: date-time
+                      duration_seconds:
+                        type: integer
+                      created_at:
+                        type: string
+                        format: date-time
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          name:
+                            type: string
+                          created_at:
+                            type: string
+                            format: date-time
+                    required:
+                    - id
+                    - sleep_time
+                    - wake_up_time
+                    - duration_seconds
+                    - created_at
+                    - user
+                  all_records:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/SleepRecord"
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User not found
+        '422':
+          description: Invalid parameters
+    get:
+      summary: List
+      tags:
+      - Sleep Records
+      description: List all sleep records for a given user with pagination
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        description: ID of the user
+        example: 1
+        schema:
+          type: integer
+      - name: page
+        in: query
+        description: Page number for pagination
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: Number of records per page
+        example: 10
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Records found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sleep_records:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/SleepRecord"
+                  pagination:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 1
+                      total_pages:
+                        type: integer
+                        example: 5
+                      total_count:
+                        type: integer
+                        example: 50
+                      next_cursor:
+                        type: integer
+                        nullable: true
+                        example: 11
+                      per_page:
+                        type: integer
+                        example: 10
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User not found
+  "/api/v1/users/{user_id}/sleep_records/{id}":
+    get:
+      summary: Detail
+      tags:
+      - Sleep Records
+      description: Get details of a specific sleep record for a given user
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        description: ID of the user
+        example: 1
+        schema:
+          type: integer
+      - name: id
+        in: path
+        required: true
+        description: ID of the sleep record
+        example: 1
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Record found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sleep_record:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      sleep_time:
+                        type: string
+                        format: date-time
+                      wake_up_time:
+                        type: string
+                        format: date-time
+                      duration_seconds:
+                        type: integer
+                      created_at:
+                        type: string
+                        format: date-time
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          name:
+                            type: string
+                          created_at:
+                            type: string
+                            format: date-time
+                    required:
+                    - id
+                    - sleep_time
+                    - wake_up_time
+                    - duration_seconds
+                    - created_at
+                    - user
+                example:
+                  sleep_record:
+                    id: 1
+                    sleep_time: '2025-07-02T20:28:47Z'
+                    wake_up_time: '2025-07-03T05:28:47Z'
+                    duration_seconds: 32400
+                    created_at: '2025-08-13T14:28:03Z'
+                    user:
+                      id: 1
+                      name: Jona Davis I
+                      created_at: '2025-08-13T14:27:38Z'
+                required:
+                - sleep_record
+        '404':
+          description: Record not found
+  "/api/v1/users/{user_id}/sleep_records/friends_sleep_records":
+    get:
+      summary: Friends Sleep Records
+      tags:
+      - Sleep Records
+      description: Get sleep records of friends for a given user
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        description: ID of the user
+        example: 1
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Records found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sleep_records:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/SleepRecord"
+                  summary:
+                    type: object
+                    properties:
+                      total_records:
+                        type: integer
+                        example: 20
+                      following_count:
+                        type: integer
+                        example: 5
+                      date_range:
+                        type: object
+                        properties:
+                          from:
+                            type: string
+                            format: date
+                            example: '2025-07-01'
+                          to:
+                            type: string
+                            format: date
+                            example: '2025-07-08'
+                      cached:
+                        type: boolean
+                        example: true
+                      cache_expires_id:
+                        type: string
+                        example: 1 hour
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User not found
+  "/api/v1/users/{user_id}/followings":
+    get:
+      summary: List user followings
+      tags:
+      - User Followings
+      parameters:
+      - name: user_id
+        in: path
+        description: ID of the user
+        example: 1
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Followings found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  followings:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                          example: John Doe
+                        created_at:
+                          type: string
+                          format: date-time
+                          example: '2023-10-01T12:00:00Z'
+                      required:
+                      - id
+                      - name
+                      - created_at
+                  pagination:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 1
+                      total_pages:
+                        type: integer
+                        example: 10
+                      total_count:
+                        type: integer
+                        example: 100
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User not found
+    post:
+      summary: Create a following
+      tags:
+      - User Followings
+      parameters:
+      - name: user_id
+        in: path
+        description: ID of the user
+        example: 1
+        required: true
+        schema:
+          type: integer
+      - name: target_user_id
+        in: query
+        description: ID of the user to follow
+        example: 2
+        schema:
+          type: integer
+      responses:
+        '201':
+          description: Following created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Successfully followed Kathyrn Mann VM
+                  following:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: Kathyrn Mann VM1
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: '2023-10-01T12:00:00Z'
+                required:
+                - id
+                - name
+                - created_at
+        '404':
+          description: User or target user not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Record not found
+        '422':
+          description: Already following user or invalid target
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unable to follow user
+                  details:
+                    type: object
+                    properties:
+                      details:
+                        type: string
+                        example: Already following this user or invalid target
+  "/api/v1/users/{user_id}/followings/{target_user_id}":
+    delete:
+      summary: Unfollow a user
+      tags:
+      - User Followings
+      parameters:
+      - name: user_id
+        in: path
+        description: ID of the user
+        example: 1
+        required: true
+        schema:
+          type: integer
+      - name: target_user_id
+        in: path
+        description: ID of the user to unfollow
+        example: 2
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Successfully unfollowed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Successfully unfollowed Kathyrn Mann VM
+        '404':
+          description: Following not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Record not found
+        '422':
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unable to unfollow user
+                  details:
+                    type: array
+                    items:
+                      type: string
+                      example: Not following this user
+servers:
+- url: http://{defaultHost}
+  variables:
+    defaultHost:
+      default: localhost:3000
+components:
+  schemas:
+    SleepRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        sleep_time:
+          type: string
+          format: date-time
+        wake_up_time:
+          type: string
+          format: date-time
+        duration_seconds:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        user:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            created_at:
+              type: string
+              format: date-time
+      required:
+      - id
+      - sleep_time
+      - wake_up_time
+      - duration_seconds
+      - created_at
+      - user

@@ -14,6 +14,7 @@
 - **Database**: SQLite3 (development/test)
 - **Cache/Queue**: Redis
 - **Testing**: RSpec
+- **API Documentation**: RSwag
 
 ## 📋 Prerequisites
 
@@ -120,4 +121,32 @@ bundle exec rspec spec/models/sleep_record_spec.rb
 
 ## API Documentation
 
-See [API Documentation](API_Documentation.md) for details.
+This application uses **RSwag** to generate interactive API documentation.
+
+### Viewing the API Documentation
+
+1. **Generate the Swagger documentation** (after running tests):
+
+   ```bash
+   bundle exec rspec --pattern "spec/requests/**/*_spec.rb"
+   ```
+
+2. **Access the interactive API docs**:
+   - Start your Rails server (`rails server`)
+   - Visit `http://localhost:3000/api-docs` in your browser
+   - Explore and test API endpoints directly from the browser
+
+### Alternative Documentation
+
+You can also refer to the static [API Documentation](API_Documentation.md) for quick reference.
+
+### Updating API Documentation
+
+The API documentation is automatically generated from RSpec request specs. To update the documentation:
+
+1. Modify the relevant request specs in `spec/requests/`
+2. Run the specs to regenerate the documentation:
+   ```bash
+   bundle exec rspec --pattern "spec/requests/**/*_spec.rb"
+   ```
+3. The Swagger JSON will be updated automatically
