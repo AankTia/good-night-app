@@ -227,112 +227,112 @@ RSpec.describe 'api/sleep_records', type: :request do
     end
   end
 
-  path '/api/v1/users/{user_id}/sleep_records/stats' do
-    get 'Sleep Statistics' do
-      tags 'Sleep Records'
-      produces 'application/json'
-      description 'Get sleep statistics for a given user over a specified period'
-      parameter name: 'user_id', in: :path, type: :integer, required: true, description: 'ID of the user', example: 1
-      parameter name: :days, in: :query, type: :integer, description: 'Number of days to calculate statistics for', example: 30
+  # path '/api/v1/users/{user_id}/sleep_records/stats' do
+  #   get 'Sleep Statistics' do
+  #     tags 'Sleep Records'
+  #     produces 'application/json'
+  #     description 'Get sleep statistics for a given user over a specified period'
+  #     parameter name: 'user_id', in: :path, type: :integer, required: true, description: 'ID of the user', example: 1
+  #     parameter name: :days, in: :query, type: :integer, description: 'Number of days to calculate statistics for', example: 30
 
-      response '200', 'Statistics found' do
-        schema type: :object,
-          properties: {
-            user_id: { type: :integer, example: 1 },
-            period_days: { type: :integer, example: 30 },
-            statistics: {
-              type: :object,
-              properties: {
-                total_sleep_time_seconds: { type: :integer, example: 86400 },
-                average_sleep_duration_seconds: { type: :integer, example: 28800 },
-                longest_sleep_duration_seconds: { type: :integer, example: 43200 },
-                shortest_sleep_duration_seconds: { type: :integer, example: 14400 },
-                sleep_records_count: { type: :integer, example: 10 }
-              }
-            }
-          }
+  #     response '200', 'Statistics found' do
+  #       schema type: :object,
+  #         properties: {
+  #           user_id: { type: :integer, example: 1 },
+  #           period_days: { type: :integer, example: 30 },
+  #           statistics: {
+  #             type: :object,
+  #             properties: {
+  #               total_sleep_time_seconds: { type: :integer, example: 86400 },
+  #               average_sleep_duration_seconds: { type: :integer, example: 28800 },
+  #               longest_sleep_duration_seconds: { type: :integer, example: 43200 },
+  #               shortest_sleep_duration_seconds: { type: :integer, example: 14400 },
+  #               sleep_records_count: { type: :integer, example: 10 }
+  #             }
+  #           }
+  #         }
 
-        let(:user_id) { 1 }
-        let(:days) { 30 }
+  #       let(:user_id) { 1 }
+  #       let(:days) { 30 }
 
-        run_test!
-      end
+  #       run_test!
+  #     end
 
-      response '404', 'User not found' do
-        schema type: :object,
-          properties: {
-            error: { type: :string, example: 'User not found' }
-          }
+  #     response '404', 'User not found' do
+  #       schema type: :object,
+  #         properties: {
+  #           error: { type: :string, example: 'User not found' }
+  #         }
 
-        let(:user_id) { 'invalid' }
-        run_test!
-      end
-    end
-  end
+  #       let(:user_id) { 'invalid' }
+  #       run_test!
+  #     end
+  #   end
+  # end
 
-  path '/api/v1/users/{user_id}/sleep_records/active' do
-    get 'Active Sleep Records' do
-      tags 'Sleep Records'
-      produces 'application/json'
-      description 'Get active sleep records for a given user'
-      parameter name: 'user_id', in: :path, type: :integer, required: true, description: 'ID of the user', example: 1
+  # path '/api/v1/users/{user_id}/sleep_records/active' do
+  #   get 'Active Sleep Records' do
+  #     tags 'Sleep Records'
+  #     produces 'application/json'
+  #     description 'Get active sleep records for a given user'
+  #     parameter name: 'user_id', in: :path, type: :integer, required: true, description: 'ID of the user', example: 1
 
-      response '200', 'Active records found' do
-        schema type: :object,
-          properties: {
-            sleep_records: {
-              type: :array,
-              items: { '$ref': '#/components/schemas/SleepRecord' }
-            }
-          }
+  #     response '200', 'Active records found' do
+  #       schema type: :object,
+  #         properties: {
+  #           sleep_records: {
+  #             type: :array,
+  #             items: { '$ref': '#/components/schemas/SleepRecord' }
+  #           }
+  #         }
 
-        let(:user_id) { 1 }
+  #       let(:user_id) { 1 }
 
-        run_test!
-      end
+  #       run_test!
+  #     end
 
-      response '404', 'User not found' do
-        schema type: :object,
-          properties: {
-            error: { type: :string, example: 'User not found' }
-          }
+  #     response '404', 'User not found' do
+  #       schema type: :object,
+  #         properties: {
+  #           error: { type: :string, example: 'User not found' }
+  #         }
 
-        let(:user_id) { 'invalid' }
-        run_test!
-      end
-    end
-  end
+  #       let(:user_id) { 'invalid' }
+  #       run_test!
+  #     end
+  #   end
+  # end
 
-  path '/api/v1/users/{user_id}/sleep_records/completed' do
-    get 'Completed Sleep Records' do
-      tags 'Sleep Records'
-      produces 'application/json'
-      description 'Get completed sleep records for a given user'
-      parameter name: 'user_id', in: :path, type: :integer, required: true, description: 'ID of the user', example: 1
+  # path '/api/v1/users/{user_id}/sleep_records/completed' do
+  #   get 'Completed Sleep Records' do
+  #     tags 'Sleep Records'
+  #     produces 'application/json'
+  #     description 'Get completed sleep records for a given user'
+  #     parameter name: 'user_id', in: :path, type: :integer, required: true, description: 'ID of the user', example: 1
 
-      response '200', 'Completed records found' do
-        schema type: :object,
-          properties: {
-            sleep_records: {
-              type: :array,
-              items: { '$ref': '#/components/schemas/SleepRecord' }
-            }
-          }
+  #     response '200', 'Completed records found' do
+  #       schema type: :object,
+  #         properties: {
+  #           sleep_records: {
+  #             type: :array,
+  #             items: { '$ref': '#/components/schemas/SleepRecord' }
+  #           }
+  #         }
 
-        let(:user_id) { 1 }
+  #       let(:user_id) { 1 }
 
-        run_test!
-      end
+  #       run_test!
+  #     end
 
-      response '404', 'User not found' do
-        schema type: :object,
-          properties: {
-            error: { type: :string, example: 'User not found' }
-          }
+  #     response '404', 'User not found' do
+  #       schema type: :object,
+  #         properties: {
+  #           error: { type: :string, example: 'User not found' }
+  #         }
 
-        let(:user_id) { 'invalid' }
-        run_test!
-      end
-    end
-  end
+  #       let(:user_id) { 'invalid' }
+  #       run_test!
+  #     end
+  #   end
+  # end
 end

@@ -284,140 +284,6 @@ paths:
                   error:
                     type: string
                     example: User not found
-  "/api/v1/users/{user_id}/sleep_records/stats":
-    get:
-      summary: Sleep Statistics
-      tags:
-      - Sleep Records
-      description: Get sleep statistics for a given user over a specified period
-      parameters:
-      - name: user_id
-        in: path
-        required: true
-        description: ID of the user
-        example: 1
-        schema:
-          type: integer
-      - name: days
-        in: query
-        description: Number of days to calculate statistics for
-        example: 30
-        schema:
-          type: integer
-      responses:
-        '200':
-          description: Statistics found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  user_id:
-                    type: integer
-                    example: 1
-                  period_days:
-                    type: integer
-                    example: 30
-                  statistics:
-                    type: object
-                    properties:
-                      total_sleep_time_seconds:
-                        type: integer
-                        example: 86400
-                      average_sleep_duration_seconds:
-                        type: integer
-                        example: 28800
-                      longest_sleep_duration_seconds:
-                        type: integer
-                        example: 43200
-                      shortest_sleep_duration_seconds:
-                        type: integer
-                        example: 14400
-                      sleep_records_count:
-                        type: integer
-                        example: 10
-        '404':
-          description: User not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: User not found
-  "/api/v1/users/{user_id}/sleep_records/active":
-    get:
-      summary: Active Sleep Records
-      tags:
-      - Sleep Records
-      description: Get active sleep records for a given user
-      parameters:
-      - name: user_id
-        in: path
-        required: true
-        description: ID of the user
-        example: 1
-        schema:
-          type: integer
-      responses:
-        '200':
-          description: Active records found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  sleep_records:
-                    type: array
-                    items:
-                      "$ref": "#/components/schemas/SleepRecord"
-        '404':
-          description: User not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: User not found
-  "/api/v1/users/{user_id}/sleep_records/completed":
-    get:
-      summary: Completed Sleep Records
-      tags:
-      - Sleep Records
-      description: Get completed sleep records for a given user
-      parameters:
-      - name: user_id
-        in: path
-        required: true
-        description: ID of the user
-        example: 1
-        schema:
-          type: integer
-      responses:
-        '200':
-          description: Completed records found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  sleep_records:
-                    type: array
-                    items:
-                      "$ref": "#/components/schemas/SleepRecord"
-        '404':
-          description: User not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: User not found
   "/api/v1/users/{user_id}/followings":
     get:
       summary: List user followings
@@ -584,6 +450,14 @@ paths:
                     example: Successfully unfollowed Kathyrn Mann VM
         '404':
           description: Following not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Record not found
         '422':
           description: Invalid parameters
           content:
