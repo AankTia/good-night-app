@@ -55,7 +55,7 @@ RSpec.describe 'user_followings', type: :request do
       tags 'User Followings'
       produces 'application/json'
       parameter name: :user_id, in: :path, type: :integer, description: 'ID of the user', example: 1
-      parameter name: :following_id, in: :query, type: :integer, description: 'ID of the user to follow', example: 2
+      parameter name: :target_user_id, in: :query, type: :integer, description: 'ID of the user to follow', example: 2
 
       response '201', 'Following created' do
         schema type: :object,
@@ -73,7 +73,7 @@ RSpec.describe 'user_followings', type: :request do
                required: ['id', 'name', 'created_at']
 
         let(:user_id) { 1 }
-        let(:following_id) { 2 } # Assuming this user exists
+        let(:target_user_id) { 2 } # Assuming this user exists
         run_test!
       end
 

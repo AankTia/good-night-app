@@ -491,7 +491,7 @@ paths:
         required: true
         schema:
           type: integer
-      - name: following_id
+      - name: target_user_id
         in: query
         description: ID of the user to follow
         example: 2
