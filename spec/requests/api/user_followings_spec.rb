@@ -114,13 +114,24 @@ RSpec.describe 'user_followings', type: :request do
       parameter name: :user_id, in: :path, type: :integer, description: 'ID of the user', example: 1
       parameter name: :target_user_id, in: :path, type: :integer, description: 'ID of the user to unfollow', example: 2
 
-      response '204', 'Successfully unfollowed' do
+      response '200', 'Successfully unfollowed' do
+        schema type: :object,
+               properties: {
+                 message: { type: :string, example: 'Successfully unfollowed Kathyrn Mann VM' }
+               }
         let(:user_id) { 1 }
         let(:target_user_id) { 2 } # Assuming this user is being followed
         run_test!
       end
 
       response '404', 'Following not found' do
+        schema type: :object,
+               properties: {
+                 error: { type: :string, example: 'Record not found' }
+               }
+
+        # This response is for when the target_user_id is not being followed
+        # Adjust the test case as needed based on your application's logic
         let(:user_id) { 1 }
         let(:target_user_id) { 9999 } # Assuming this user is not being followed
         run_test!
@@ -129,7 +140,13 @@ RSpec.describe 'user_followings', type: :request do
       response '422', 'Invalid parameters' do
         schema type: :object,
                properties: {
-                 error: { type: :string, example: 'Invalid parameters' }
+                 error: { type: :string, example: 'Unable to unfollow user' },
+                 details: { type: :array,
+                   items: {
+                     type: :string,
+                     example: 'Not following this user'
+                   }
+                 }
                }
 
         # This response is for when the target_user_id is missing or invalid

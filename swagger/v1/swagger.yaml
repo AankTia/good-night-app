@@ -572,8 +572,16 @@ paths:
         schema:
           type: integer
       responses:
-        '204':
+        '200':
           description: Successfully unfollowed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Successfully unfollowed Kathyrn Mann VM
         '404':
           description: Following not found
         '422':
@@ -585,7 +593,12 @@ paths:
                 properties:
                   error:
                     type: string
-                    example: Invalid parameters
+                    example: Unable to unfollow user
+                  details:
+                    type: array
+                    items:
+                      type: string
+                      example: Not following this user
 servers:
 - url: http://{defaultHost}
   variables:
